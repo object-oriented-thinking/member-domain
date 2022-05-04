@@ -33,7 +33,7 @@
 ### Pull Request 생성하기
 Pull Request에서의 글은 구현한 기능에 대해 설명과 어던 의도로 설계했는지 작성해주세요 ☺
 
-> Pull Request 시 제목은 `[n주차 미션] git 이름` 으로 작성해 주세요!
+> Pull Request 시 제목은 `git 이름` 으로 작성해 주세요!
 
 ### 다른 팀원들의 PR을 살피고 리뷰 남기기
 
