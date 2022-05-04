@@ -22,7 +22,7 @@
     ```
 5. 작업용 브랜치에서 미션을 수행한 후, `commit`과 `push`를 합니다.
 6. 미션 구현이 완료되었다면 Pull Request를 생성합니다.
-    - Pull Request 시 제목은 `[n주차 미션] git 이름` 으로 작성해 주세요!
+    - Pull Request 시 제목은 `git 이름` 으로 작성해 주세요!
     - `base`는 `{자신의 GIT ID}`로 설정해주세요.(**base를 master로 하면 안됩니다.**)
     - `compare`는 `{자신의 GIT ID}_Done`입니다.
 
