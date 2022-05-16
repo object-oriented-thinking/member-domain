@@ -1,9 +1,6 @@
 package our.member.member.domain;
 
-import our.member.member.error.NotAllowedDomainException;
-import our.member.member.error.NotEmailFormatException;
-import our.member.member.error.NotInputSpecialSymbolException;
-import our.member.member.error.ProfanityException;
+import our.member.member.error.*;
 import our.member.member.error.NotAllowedDomainException;
 
 import java.util.UUID;
@@ -35,6 +32,10 @@ public class Member {
         String domain = email.substring(email.indexOf("@") + 1, email.indexOf("."));
         if (domain != "gmail" && domain != "naver" && domain != "daum") {
             throw new NotAllowedDomainException();
+        }
+
+        if(memberType != MemberType.ADMIN && memberType != MemberType.APPLICANT && memberType != MemberType.MEMBER){
+            throw new NonMemberException();
         }
         this.username = new Username(username);
     }

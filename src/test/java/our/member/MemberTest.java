@@ -5,10 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import our.member.member.domain.Member;
 import our.member.member.domain.MemberType;
-import our.member.member.error.NotAllowedDomainException;
-import our.member.member.error.NotEmailFormatException;
-import our.member.member.error.NotInputSpecialSymbolException;
-import our.member.member.error.ProfanityException;
+import our.member.member.error.*;
 
 import java.util.UUID;
 
@@ -83,11 +80,18 @@ class MemberTest {
     void test9() {
         String email = "mail@gmail.com";
         Assertions.assertThrows(NotAllowedDomainException.class, () -> {
-            new Member(UUID.randomUUID(),"username",email,"password!",MemberType.ADMIN);
+            new Member(UUID.randomUUID(),"username",email,"password!", MemberType.ADMIN);
         });
     }
-//- 도메인은 `gmail`, `naver`, `daum`만 가능하다.
-//- 회원 유형은 인증 유무에 따라 변하며, 지원자(`APPLICANT`), 회원(`MEMBER`) 중 하나의 정보를 가진다.
+
+    @Test
+    @DisplayName("회원 유형은 인증 유무에 따라 지원자(`APPLICANT`), 회원(`MEMBER`)이 나뉘며, 관리자('ADMIN'), 회원(`MEMBER`)이 아니면 NonMemberException 예외가 발생한다.")
+    void test10() {
+        MemberType memberType = MemberType.ADMIN;
+        Assertions.assertThrows(NonMemberException.class, () -> {
+            new Member(UUID.randomUUID(),"username","email@email.com","password!", memberType);
+        });
+    }
 
 
 }
