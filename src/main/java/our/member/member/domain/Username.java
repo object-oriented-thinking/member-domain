@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Username {
 
-    private String username;
+    private final String username;
 
     public Username(String username) {
         if (username.isBlank()) {
