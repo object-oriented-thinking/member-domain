@@ -2,7 +2,7 @@ package our.member.service;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-import our.member.domain.TokenEntity;
+import our.member.domain.Token;
 import our.member.domain.UserEntity;
 import our.member.repository.TokenRepository;
 
@@ -23,7 +23,7 @@ public class UserAuthenticationService implements authenticationService{
     public void sendTokenToEmail(UserEntity userEntity) {
         // token 생성
         String token = userEntity.getEmail() + userEntity.getUsername();
-        TokenEntity tokenEntity = new TokenEntity();
+        Token tokenEntity = new Token();
         tokenEntity.setToken(token);
         tokenEntity.setUserId(userEntity.getUserId());
         tokenRepository.save(tokenEntity);
@@ -41,12 +41,12 @@ public class UserAuthenticationService implements authenticationService{
 
     @Override
     public boolean verifyToken(UserEntity userEntity, String token) {
-        Optional<TokenEntity> tokenOptional = tokenRepository.findByToken(token);
+        Optional<Token> tokenOptional = tokenRepository.findByToken(token);
         if (tokenOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         // 존재함
-        TokenEntity existToken = tokenOptional.get();
+        Token existToken = tokenOptional.get();
         if (existToken.getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("인증 유효시간이 만료된 토큰입니다.");
         }
