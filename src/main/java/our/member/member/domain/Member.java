@@ -37,4 +37,7 @@ public class Member {
         return password;
     }
 
+    public MemberType getMemberType() {
+        return memberType;
+    }
 }

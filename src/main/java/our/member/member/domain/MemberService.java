@@ -1,6 +1,7 @@
 package our.member.member.domain;
 
 import org.springframework.stereotype.Service;
+import our.member.member.error.DuplicatedEmailException;
 
 @Service
 public class MemberService {
@@ -13,6 +14,9 @@ public class MemberService {
 
     //TODO 서비스 기능 구현
     public Member join(Member member) {
+        if (memberRepository.isDuplicated(member.getEmail())) {
+            throw new DuplicatedEmailException();
+        }
         return memberRepository.save(member);
     }
 }

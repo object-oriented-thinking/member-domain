@@ -1,7 +1,9 @@
 package our.member.member.domain;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import our.member.member.error.DuplicatedEmailException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,9 +22,23 @@ class MemberServiceTest {
         assertThat(requestMember.getUsername()).isEqualTo(joinMember.getUsername());
     }
 
-//TODO 회원(`MEMBER`)과 이메일 중복이 되어서는 안된다.
+    @Test
+    @DisplayName("회원(`MEMBER`)과 이메일 중복이 되면 DuplicatedEmailException 예외가 발생한다.")
+    void test2() {
+        Member 기존회원 = new Member(null, "기존 회원", "email@gmail.com", "password!", MemberType.MEMBER);
+        memberService.join(기존회원);
+
+        Member requestMember = new Member("user", "email@gmail.com", "password!");
+
+        Assertions.assertThrows(
+                DuplicatedEmailException.class, () -> memberService.join(requestMember)
+        );
+    }
+
 //TODO 지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 현재 지원자의 정보를 저장한다.
+
 //TODO 지원자(`APPLICANT`)의 정보를 저장한다.
+
 //TODO 인증을 요청한다.
 
 //TODO 지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.
