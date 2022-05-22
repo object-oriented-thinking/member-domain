@@ -1,16 +1,14 @@
 package our.member.member.domain;
 
 import our.member.member.error.NonMemberException;
-import our.member.member.error.NotInputSpecialSymbolException;
 
-import javax.persistence.*;
 import java.util.UUID;
 
 public class Member {
     private Long id;
-    private Username username;
-    private Email email;
-    private Password password;
+    private final Username username;
+    private final Email email;
+    private final Password password;
     private MemberType memberType;
 
     public Member(UUID id, String username, String email, String password, MemberType memberType) {
@@ -22,4 +20,21 @@ public class Member {
         this.password = new Password(password);
         this.memberType = memberType;
     }
+
+    public Member(String username, String email, String password) {
+        this(null, username, email, password, MemberType.APPLICANT);
+    }
+
+    public Username getUsername() {
+        return username;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public Password getPassword() {
+        return password;
+    }
+
 }

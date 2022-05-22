@@ -1,11 +1,8 @@
-package our.member;
+package our.member.member.domain;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import our.member.member.domain.Email;
-import our.member.member.domain.Member;
-import our.member.member.domain.MemberType;
 import our.member.member.error.*;
 
 import java.util.UUID;
