@@ -19,8 +19,21 @@ public class FakeMemberRepository implements MemberRepository {
 
     @Override
     public boolean isDuplicated(Email email) {
-        return memberMap.values().stream().filter(member -> member.getMemberType().equals(MemberType.MEMBER)).map(
-                Member::getEmail
-        ).anyMatch(email1 -> email1.equals(email));
+        return memberMap.values().stream()
+                .filter(member -> member.getMemberType().equals(MemberType.MEMBER))
+                .map(Member::getEmail)
+                .anyMatch(email1 -> email1.equals(email));
     }
+
+    public void delete(Member requestMember) {
+//        UUID targetMember = memberMap.entrySet().stream()
+//                            .filter(member -> member.equals(requestMember)
+//
+//                                    );
+//        memberMap.remove(targetMember);
+    }
+
+//    public Member apply(Member applyMember) {
+//
+//    }
 }

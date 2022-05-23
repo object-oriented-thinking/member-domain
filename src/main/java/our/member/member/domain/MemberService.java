@@ -19,4 +19,16 @@ public class MemberService {
         }
         return memberRepository.save(member);
     }
+
+    public void delete(Member member) {
+        memberRepository.delete(member);
+    }
+
+//    public Member apply(Member member) {
+//            if (memberRepository.isDuplicated(member.getEmail())) {
+//                throw new DuplicatedEmailException();
+//            }
+//            return memberRepository.save(member);
+//    }
+
 }

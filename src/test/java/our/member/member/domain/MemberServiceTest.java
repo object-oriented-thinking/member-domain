@@ -35,15 +35,34 @@ class MemberServiceTest {
         );
     }
 
-//TODO 지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 현재 지원자의 정보를 저장한다.
+    // 지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 현재 지원자의 정보를 저장한다.
+    @Test
+    @DisplayName("지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 지원자의 정보를 저장한다.")
+    void test3() {
+        Member 기존지원자 = new Member(null, "지원자","email@gmail.com","password!",MemberType.APPLICANT);
+        memberService.join(기존지원자);
+        Member applyMember = new Member("지원자", "email@gmail.com", "password!");
 
-//TODO 지원자(`APPLICANT`)의 정보를 저장한다.
 
-//TODO 인증을 요청한다.
+    }
+    // 지원자(`APPLICANT`)의 정보를 저장한다.
+    @Test
+    @DisplayName("지원자(`APPLICANT`)의 정보를 저장한다.")
+    void test4() {
+        Member requestMember = new Member("지원자","email@gmail.com", "password!");
+        Member applyMember = memberService.join(requestMember);
+        assertThat(requestMember.getUsername()).isEqualTo(applyMember.getUsername());
+    }
+    //TODO 인증을 요청한다.
 
-//TODO 지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.
-//TODO 지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.
-//TODO 회원(`MEMBER`)으로 변경한다.
+    //TODO 지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.
+    //TODO 지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.
+    //TODO 회원(`MEMBER`)으로 변경한다.
+    @Test
+    @DisplayName("지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.")
+    void test5() {
+    }
+
 
 //TODO 회원의 이름 정보를 가져와 회원 정보 수정한다.
 //TODO 사용자 이름 정보를 변경하고, 사용자 이름 정책에 맞아야 한다.
