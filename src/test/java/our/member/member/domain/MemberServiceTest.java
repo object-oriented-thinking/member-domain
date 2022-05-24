@@ -31,7 +31,7 @@ class MemberServiceTest {
     @DisplayName("회원(`MEMBER`)과 이메일 중복이 되면 DuplicatedEmailException 예외가 발생한다.")
     void test2() {
         //given
-        memberRepository.save(기존회원);
+        memberRepository.save(MEMBER_TYPE_MEMBER);
         // when
         Member requestMember = new Member("user", "email@gmail.com", "password!");
         //then
@@ -44,7 +44,7 @@ class MemberServiceTest {
     @DisplayName("지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 지원자의 정보를 저장한다.")
     void test3() {
         //given
-        Member member = memberRepository.save(지원회원);
+        Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
 
         String email = member.getEmail().getEmail();
         Member requestReApplyMember = new Member("다시지원한사용자", email, "password!");
@@ -73,7 +73,7 @@ class MemberServiceTest {
     @DisplayName("인증이 실패하면 AuthenticationFailedException 예외를 발생한다.")
     void test5() {
         assertThatThrownBy(
-                () -> memberService.apply(인증에실패하는회원)
+                () -> memberService.apply(FAILED_REQUEST_MEMBER)
         ).isInstanceOf(AuthenticationFailedException.class);
     }
 
@@ -81,7 +81,7 @@ class MemberServiceTest {
     @DisplayName("지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.")
     void test6() {
         //given
-        Member member = memberRepository.save(지원회원);
+        Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         String email = member.getEmail().getEmail();
         //when & then
         Assertions.assertDoesNotThrow(() -> memberService.acceptJoin(email));
@@ -91,7 +91,7 @@ class MemberServiceTest {
     @DisplayName("지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.")
     void test7() {
         //given
-        Member member = memberRepository.save(기존회원);
+        Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         String email = member.getEmail().getEmail();
         //when & then
         assertThatThrownBy(() -> memberService.acceptJoin(email)).isInstanceOf(NotAllowedEmailException.class);
@@ -101,7 +101,7 @@ class MemberServiceTest {
     @DisplayName("회원(`MEMBER`)으로 변경한다.")
     void test8() {
         //given
-        Member member = memberRepository.save(지원회원);
+        Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         String email = member.getEmail().getEmail();
         //when
         memberService.acceptJoin(email);
@@ -113,7 +113,7 @@ class MemberServiceTest {
     @DisplayName("회원의 이름 정보를 가져와 사용자 이름을 수정한다.")
     void test9() {
         //given
-        Member member = memberRepository.save(기존회원);
+        Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
         String username = "변경하려는 이름";
         //when
@@ -126,7 +126,7 @@ class MemberServiceTest {
     @DisplayName("사용자의 유형이 회원이아니면 예외가 발생한다.")
     void test10() {
         //given
-        Member member = memberRepository.save(지원회원);
+        Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         UUID id = member.getId();
         String username = "변경하려는 이름";
         //when & then
@@ -137,7 +137,7 @@ class MemberServiceTest {
     @DisplayName("기존 이름으로 변경하면 예외가 발생한다.")
     void test11() {
         //given
-        Member member = memberRepository.save(기존회원);
+        Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
         String username = member.getUsername().getUsername();
         //when & then

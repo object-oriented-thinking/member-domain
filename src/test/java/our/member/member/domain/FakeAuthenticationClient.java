@@ -1,10 +1,10 @@
 package our.member.member.domain;
 
-import static our.member.member.domain.MemberFixture.인증에실패하는회원;
+import static our.member.member.domain.MemberFixture.FAILED_REQUEST_MEMBER;
 
 public class FakeAuthenticationClient implements AuthenticationClient {
     @Override
     public boolean requestAuthentication(Member member) {
-        return !member.getEmail().equals(인증에실패하는회원.getEmail());
+        return !member.getEmail().equals(FAILED_REQUEST_MEMBER.getEmail());
     }
 }
