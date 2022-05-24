@@ -3,39 +3,41 @@ package our.member.member.domain;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import our.member.member.error.AuthenticationFailedException;
 import our.member.member.error.DuplicatedEmailException;
+import our.member.member.error.NotAllowedEmailException;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static our.member.member.domain.MemberFixture.*;
 
 class MemberServiceTest {
 
-    private static final Member 기존회원 = new Member(null, "기존 회원", "email@gmail.com", "password!", MemberType.MEMBER);
-    private static final Member REQUEST_MEMBER = new Member("user", "email@gmail.com", "password!");
     private final MemberRepository memberRepository = new FakeMemberRepository();
-    private final MemberService memberService = new MemberService(memberRepository);
-
+    private final AuthenticationClient authentication = new FakeAuthenticationClient();
+    private final MemberService memberService = new MemberService(memberRepository, authentication);
 
     @Test
     @DisplayName("회원가입을 하기 위해 이메일과 지원자 이름, 그리고 비밀번호를 가지고 회원가입을 요청한다.")
     void test1() {
         //given & when
-        Member joinMember = memberService.join(REQUEST_MEMBER);
+        Member applyMember = memberService.apply(REQUEST_MEMBER);
         //then
-        assertThat(REQUEST_MEMBER.getUsername()).isEqualTo(joinMember.getUsername());
+        assertThat(REQUEST_MEMBER.getUsername()).isEqualTo(applyMember.getUsername());
     }
 
     @Test
     @DisplayName("회원(`MEMBER`)과 이메일 중복이 되면 DuplicatedEmailException 예외가 발생한다.")
     void test2() {
         //given
-        memberService.join(기존회원);
+        memberService.apply(기존회원);
         // when
         Member requestMember = new Member("user", "email@gmail.com", "password!");
         //then
         Assertions.assertThrows(
-                DuplicatedEmailException.class, () -> memberService.join(requestMember)
+                DuplicatedEmailException.class, () -> memberService.apply(requestMember)
         );
     }
 
@@ -43,12 +45,12 @@ class MemberServiceTest {
     @DisplayName("지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 지원자의 정보를 저장한다.")
     void test3() {
         //given
-        Member member = memberService.join(REQUEST_MEMBER);
+        Member member = memberService.apply(REQUEST_MEMBER);
         String email = member.getEmail().getEmail();
+        Member requestReApplyMember = new Member("다시지원한사용자", email, "password!");
 
         //when
-        Member requestReApplyMember = new Member("다시지원한사용자", email, "password!");
-        Member responseReApplyMember = memberService.join(requestReApplyMember);
+        Member responseReApplyMember = memberService.apply(requestReApplyMember);
 
         //then
         assertThat(Objects.requireNonNull(memberRepository.findByEmail(email).orElse(null)).getUsername()).isNotEqualTo(member.getUsername());
@@ -62,33 +64,58 @@ class MemberServiceTest {
         //given
         Member requestMember = new Member("지원자", "email@gmail.com", "password!");
         //when
-        Member applyMember = memberService.join(requestMember);
+        Member applyMember = memberService.apply(requestMember);
         //then
         assertThat(applyMember.getMemberType()).isEqualTo(MemberType.APPLICANT);
         assertThat(applyMember.getUsername()).isEqualTo(requestMember.getUsername());
     }
 
     @Test
-    @DisplayName("인증을 요청한다.")
+    @DisplayName("인증이 실패하면 AuthenticationFailedException 예외를 발생한다.")
     void test5() {
+        assertThatThrownBy(
+                () -> memberService.apply(인증에실패하는회원)
+        ).isInstanceOf(AuthenticationFailedException.class);
     }
 
     @Test
     @DisplayName("지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.")
     void test6() {
+        //given
+        Member requestMember = REQUEST_MEMBER;
+        String email = requestMember.getEmail().getEmail();
+        //when
+        memberService.apply(requestMember);
+        //then
+        Assertions.assertDoesNotThrow(() -> memberService.acceptJoin(email));
     }
 
     @Test
     @DisplayName("지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.")
-    void test7() {
+    void test8() {
+        //given
+        Member requestMember = 기존회원;
+        String email = requestMember.getEmail().getEmail();
+        //when
+        memberService.apply(requestMember);
+        //then
+        assertThatThrownBy(() -> memberService.acceptJoin(email)).isInstanceOf(NotAllowedEmailException.class);
     }
 
     @Test
     @DisplayName("회원(`MEMBER`)으로 변경한다.")
-    void test8() {
+    void test9() {
+        //given
+        Member requestMember = REQUEST_MEMBER;
+        String email = requestMember.getEmail().getEmail();
+        //when
+        Member responseMember = memberService.apply(requestMember);
+        memberService.acceptJoin(email);
+        //then
+        assertThat(responseMember.getMemberType()).isEqualTo(MemberType.MEMBER);
     }
 
-    //TODO 회원의 이름 정보를 가져와 회원 정보 수정한다.
+//TODO 회원의 이름 정보를 가져와 회원 정보 수정한다.
 //TODO 사용자 이름 정보를 변경하고, 사용자 이름 정책에 맞아야 한다.
 
 //TODO 회원은 현재 비밀번호의 정보와 새 비밀번호 정보를 가져와 비밀번호 변경한다.
