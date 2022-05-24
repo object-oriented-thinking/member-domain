@@ -36,10 +36,6 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-    public void delete(Member member) {
-        memberRepository.delete(member);
-    }
-
     public void acceptJoin(String email) {
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         if (member.getMemberType().equals(MemberType.MEMBER)) {

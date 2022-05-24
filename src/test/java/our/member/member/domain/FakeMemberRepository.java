@@ -42,7 +42,4 @@ public class FakeMemberRepository implements MemberRepository {
                 .anyMatch(email1 -> email1.equals(email));
     }
 
-    public void delete(Member requestMember) {
-    }
-
 }
