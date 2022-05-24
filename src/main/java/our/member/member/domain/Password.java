@@ -8,10 +8,6 @@ public class Password {
 
     private final String password;
 
-    public String getPassword() {
-        return password;
-    }
-
     public Password(String password, PasswordPolicy passwordPolicy) {
 
         if (!passwordPolicy.isCorrectPassword(password)) {

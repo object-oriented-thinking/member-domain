@@ -11,18 +11,18 @@ public class Member {
     private Password password;
     private MemberType memberType;
 
-    public Member(UUID id, String username, String email, Password password, MemberType memberType) {
+    public Member(UUID id, Username username, String email, Password password, MemberType memberType) {
         if (!memberType.equals(MemberType.ADMIN) && !memberType.equals(MemberType.APPLICANT) && !memberType.equals(MemberType.MEMBER)) {
             throw new NonMemberException();
         }
         this.id = id;
-        this.username = new Username(username);
+        this.username = username;
         this.email = new Email(email);
         this.password = password;
         this.memberType = memberType;
     }
 
-    public Member(String username, String email, Password password) {
+    public Member(Username username, String email, Password password) {
         this(null, username, email, password, MemberType.APPLICANT);
     }
 
@@ -31,7 +31,7 @@ public class Member {
     }
 
     public Member reApplyMember(Member member) {
-        return new Member(this.id, member.getUsername().getUsername(), member.getEmail().getEmail(), member.getPassword(), MemberType.APPLICANT);
+        return new Member(this.id, member.getUsername(), member.getEmail().getEmail(), member.getPassword(), MemberType.APPLICANT);
     }
 
     public Username getUsername() {

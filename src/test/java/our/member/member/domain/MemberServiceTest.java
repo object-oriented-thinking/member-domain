@@ -6,6 +6,7 @@ import our.member.member.error.*;
 import our.member.member.fixture.FakeAuthenticationClient;
 import our.member.member.fixture.FakeMemberRepository;
 import our.member.member.fixture.FakePasswordPolicy;
+import our.member.member.fixture.FakeProfanityPolicy;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -21,7 +22,8 @@ class MemberServiceTest {
     private final MemberRepository memberRepository = new FakeMemberRepository();
     private final AuthenticationClient authentication = new FakeAuthenticationClient();
     private final PasswordPolicy passwordPolicy = new FakePasswordPolicy();
-    private final MemberService memberService = new MemberService(memberRepository, authentication, passwordPolicy);
+    private final ProfanityPolicy profanityPolicy = new FakeProfanityPolicy();
+    private final MemberService memberService = new MemberService(memberRepository, authentication);
 
     @Test
     @DisplayName("회원가입을 하기 위해 이메일과 지원자 이름, 그리고 비밀번호를 가지고 회원가입을 요청한다.")
@@ -38,7 +40,7 @@ class MemberServiceTest {
         //given
         memberRepository.save(MEMBER_TYPE_MEMBER);
         // when
-        Member requestMember = new Member("user", "email@gmail.com", new Password("passwrod!", passwordPolicy));
+        Member requestMember = new Member(new Username("user", profanityPolicy), "email@gmail.com", new Password("passwrod!", passwordPolicy));
         //then
         assertThrows(
                 DuplicatedEmailException.class, () -> memberService.apply(requestMember)
@@ -52,7 +54,7 @@ class MemberServiceTest {
         Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
 
         String email = member.getEmail().getEmail();
-        Member requestReApplyMember = new Member("다시지원한사용자", email, new Password("passwrod!", passwordPolicy));
+        Member requestReApplyMember = new Member(new Username("다시지원한사용자", profanityPolicy), email, new Password("passwrod!", passwordPolicy));
 
         //when
         Member responseReApplyMember = memberService.apply(requestReApplyMember);
@@ -66,7 +68,7 @@ class MemberServiceTest {
     @DisplayName("지원자(`APPLICANT`)가 아니면 예외가 발생한다.")
     void test4() {
         //given
-        Member requestMember = new Member("지원자", "email@gmail.com", new Password("passwrod!", passwordPolicy));
+        Member requestMember = new Member(new Username("지원자", profanityPolicy), "email@gmail.com", new Password("password!", passwordPolicy));
         //when
         requestMember.makeMember();
         //then
@@ -120,11 +122,11 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
-        String username = "변경하려는 이름";
         //when
+        Username username = new Username("변경하려는 이름", profanityPolicy);
         Member modifyMember = memberService.modifyUsername(id, username);
         //then
-        assertThat(modifyMember.getUsername()).isEqualTo(new Username(username));
+        assertThat(modifyMember.getUsername()).isEqualTo(username);
     }
 
     @Test
@@ -133,7 +135,7 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         UUID id = member.getId();
-        String username = "변경하려는 이름";
+        Username username = new Username("변경하려는 이름", profanityPolicy);
         //when & then
         assertThatThrownBy(() -> memberService.modifyUsername(id, username)).isInstanceOf(NonMemberException.class);
     }
@@ -144,7 +146,7 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
-        String username = member.getUsername().getUsername();
+        Username username = member.getUsername();
         //when & then
         assertThatThrownBy(() -> memberService.modifyUsername(id, username)).isInstanceOf(DuplicatedUsernameException.class);
     }
@@ -155,11 +157,11 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
-        String password = "password!!";
+        Password password = new Password("password!!", passwordPolicy);
         //when
         Member modifyMember = memberService.modifyPassword(id, password);
         //then
-        assertThat(modifyMember.getPassword()).isEqualTo(new Password(password, passwordPolicy));
+        assertThat(modifyMember.getPassword()).isEqualTo(password);
     }
 
     @Test
@@ -168,7 +170,7 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         UUID id = member.getId();
-        String password = "password!!";
+        Password password = new Password("password!!", passwordPolicy);
         //when & then
         assertThatThrownBy(
                 () -> memberService.modifyPassword(id, password)
@@ -181,7 +183,7 @@ class MemberServiceTest {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
-        String password = "password!";
+        Password password = new Password("password!", passwordPolicy);
         //when & then
         assertThatThrownBy(
                 () -> memberService.modifyPassword(id, password)

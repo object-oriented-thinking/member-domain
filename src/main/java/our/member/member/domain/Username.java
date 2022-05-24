@@ -9,12 +9,12 @@ public class Username {
 
     private final String username;
 
-    public Username(String username) {
+    public Username(String username, ProfanityPolicy profanityClient) {
         if (username.isBlank()) {
             throw new IllegalArgumentException();
         }
 
-        if (username.equals("fuck")) {
+        if (profanityClient.containsProfanity(username)) {
             throw new ProfanityException("욕설이 들어가면 안됩니다.");
         }
 

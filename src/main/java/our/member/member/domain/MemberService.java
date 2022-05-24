@@ -10,12 +10,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AuthenticationClient authentication;
-    private final PasswordPolicy passwordPolicy;
 
-    public MemberService(MemberRepository memberRepository, AuthenticationClient authentication, PasswordPolicy passwordPolicy) {
+    public MemberService(MemberRepository memberRepository, AuthenticationClient authentication) {
         this.memberRepository = memberRepository;
         this.authentication = authentication;
-        this.passwordPolicy = passwordPolicy;
     }
 
     public Member apply(Member member) {
@@ -46,36 +44,33 @@ public class MemberService {
         member.makeMember();
     }
 
-    public Member modifyUsername(UUID memberId, String username) {
+    public Member modifyUsername(UUID memberId, Username username) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-
-        Username memberUsername = new Username(username);
 
         if (!member.isMember()) {
             throw new NonMemberException();
         }
 
-        if (member.getUsername().equals(memberUsername)) {
+        if (member.getUsername().equals(username)) {
             throw new DuplicatedUsernameException();
         }
 
-        member.rename(memberUsername);
+        member.rename(username);
         return member;
     }
 
-    public Member modifyPassword(UUID memberId, String password) {
+    public Member modifyPassword(UUID memberId, Password password) {
         Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
-        Password memberPassword = new Password(password, passwordPolicy);
 
         if (!member.isMember()) {
             throw new NonMemberException();
         }
 
-        if (member.getPassword().equals(memberPassword)) {
+        if (member.getPassword().equals(password)) {
             throw new DuplicatedPasswordException();
         }
 
-        member.modifyPassword(memberPassword);
+        member.modifyPassword(password);
         return member;
     }
 }

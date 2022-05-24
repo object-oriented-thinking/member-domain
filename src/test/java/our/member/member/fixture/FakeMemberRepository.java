@@ -15,7 +15,7 @@ public class FakeMemberRepository implements MemberRepository {
         if (requestMember.getId() == null) {
             uuid = UUID.randomUUID();
         }
-        Member responseMember = new Member(uuid, requestMember.getUsername().getUsername(), requestMember.getEmail().getEmail(), requestMember.getPassword(), requestMember.getMemberType());
+        Member responseMember = new Member(uuid, requestMember.getUsername(), requestMember.getEmail().getEmail(), requestMember.getPassword(), requestMember.getMemberType());
         memberMap.put(uuid, responseMember);
         return responseMember;
     }
