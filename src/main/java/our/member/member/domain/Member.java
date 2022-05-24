@@ -8,21 +8,21 @@ public class Member {
     private final UUID id;
     private Username username;
     private final Email email;
-    private final Password password;
+    private Password password;
     private MemberType memberType;
 
-    public Member(UUID id, String username, String email, String password, MemberType memberType) {
+    public Member(UUID id, String username, String email, Password password, MemberType memberType) {
         if (!memberType.equals(MemberType.ADMIN) && !memberType.equals(MemberType.APPLICANT) && !memberType.equals(MemberType.MEMBER)) {
             throw new NonMemberException();
         }
         this.id = id;
         this.username = new Username(username);
         this.email = new Email(email);
-        this.password = new Password(password);
+        this.password = password;
         this.memberType = memberType;
     }
 
-    public Member(String username, String email, String password) {
+    public Member(String username, String email, Password password) {
         this(null, username, email, password, MemberType.APPLICANT);
     }
 
@@ -31,7 +31,7 @@ public class Member {
     }
 
     public Member reApplyMember(Member member) {
-        return new Member(this.id, member.getUsername().getUsername(), member.getEmail().getEmail(), member.getPassword().getPassword(), MemberType.APPLICANT);
+        return new Member(this.id, member.getUsername().getUsername(), member.getEmail().getEmail(), member.getPassword(), MemberType.APPLICANT);
     }
 
     public Username getUsername() {
@@ -52,6 +52,10 @@ public class Member {
 
     public void rename(Username username) {
         this.username = username;
+    }
+
+    public void modifyPassword(Password password) {
+        this.password = password;
     }
 
     public void makeMember() {

@@ -10,10 +10,12 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final AuthenticationClient authentication;
+    private final PasswordPolicy passwordPolicy;
 
-    public MemberService(MemberRepository memberRepository, AuthenticationClient authentication) {
+    public MemberService(MemberRepository memberRepository, AuthenticationClient authentication, PasswordPolicy passwordPolicy) {
         this.memberRepository = memberRepository;
         this.authentication = authentication;
+        this.passwordPolicy = passwordPolicy;
     }
 
     public Member apply(Member member) {
@@ -58,6 +60,22 @@ public class MemberService {
         }
 
         member.rename(memberUsername);
+        return member;
+    }
+
+    public Member modifyPassword(UUID memberId, String password) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        Password memberPassword = new Password(password, passwordPolicy);
+
+        if (!member.isMember()) {
+            throw new NonMemberException();
+        }
+
+        if (member.getPassword().equals(memberPassword)) {
+            throw new DuplicatedPasswordException();
+        }
+
+        member.modifyPassword(memberPassword);
         return member;
     }
 }

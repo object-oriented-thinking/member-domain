@@ -9,17 +9,19 @@ import java.util.UUID;
 
 class MemberTest {
 
+    private PasswordPolicy passwordPolicy = new FakePasswordPolicy();
+
     @Test
     @DisplayName("사용자 식별자, 사용자 이름, 이메일, 비밀번호, 그리고 회원 유형이 들어간다")
     void test1() {
-        Assertions.assertDoesNotThrow(() -> new Member(UUID.randomUUID(), "name", "email@gmail.com", "password!", MemberType.ADMIN));
+        Assertions.assertDoesNotThrow(() -> new Member(UUID.randomUUID(), "name", "email@gmail.com", new Password("password!", passwordPolicy), MemberType.ADMIN));
     }
 
     @Test
     @DisplayName("사용자 이름은 공백이 들어가면 IllegalArgumentException 이 발생한다. ")
     void test2() {
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            new Member(UUID.randomUUID(), "", "email@gmail.com", "password!", MemberType.ADMIN);
+            new Member(UUID.randomUUID(), "", "email@gmail.com", new Password("password!", passwordPolicy), MemberType.ADMIN);
         });
     }
 
@@ -27,7 +29,7 @@ class MemberTest {
     @DisplayName("사용자 이름은 욕설이 들어가면 ProfanityException 이 발생한다. ")
     void test4() {
         Assertions.assertThrows(ProfanityException.class, () -> {
-            new Member(UUID.randomUUID(), "fuck", "email@gmail.com", "password!", MemberType.ADMIN);
+            new Member(UUID.randomUUID(), "fuck", "email@gmail.com", new Password("password!", passwordPolicy), MemberType.ADMIN);
         });
     }
 
@@ -38,7 +40,7 @@ class MemberTest {
         String username = "asnfjakshfjkshfjkashfkjashfkjsajkhaskjfhksjfkjshskjdfhksjdfhsdfkjs";
         //when & then
         Assertions.assertThrows(RuntimeException.class, () -> {
-            new Member(UUID.randomUUID(), username, "email@gmail.com", "password!", MemberType.ADMIN);
+            new Member(UUID.randomUUID(), username, "email@gmail.com", new Password("password!", passwordPolicy), MemberType.ADMIN);
         });
     }
 
@@ -49,7 +51,7 @@ class MemberTest {
         String password = "password";
         //when & then
         Assertions.assertThrows(NotInputSpecialSymbolException.class, () -> {
-            new Member(UUID.randomUUID(), "username", "email@gmail.com", password, MemberType.ADMIN);
+            new Password(password, passwordPolicy);
         });
     }
 
@@ -60,7 +62,7 @@ class MemberTest {
         String password = "pass!";
         //when & then
         Assertions.assertThrows(RuntimeException.class, () -> {
-            new Member(UUID.randomUUID(), "username", "email@gmail.com", password, MemberType.ADMIN);
+            new Password(password, passwordPolicy);
         });
     }
 
@@ -69,7 +71,7 @@ class MemberTest {
     void test8() {
         String email = "mail.com";
         Assertions.assertThrows(NotEmailFormatException.class, () -> {
-           new Member(UUID.randomUUID(), "username",email,"password!",MemberType.ADMIN);
+            new Member(UUID.randomUUID(), "username", email, new Password("password!", passwordPolicy), MemberType.ADMIN);
         });
     }
 
@@ -78,7 +80,7 @@ class MemberTest {
     void test9() {
         String email = "mail@notgmail.com";
         Assertions.assertThrows(NotAllowedDomainException.class, () -> {
-            new Member(UUID.randomUUID(),"username",email,"password!", MemberType.ADMIN);
+            new Member(UUID.randomUUID(), "username", email, new Password("password!", passwordPolicy), MemberType.ADMIN);
         });
     }
 
@@ -87,7 +89,7 @@ class MemberTest {
     void test10() {
         MemberType memberType = MemberType.NON_MEMBER;
         Assertions.assertThrows(NonMemberException.class, () -> {
-            new Member(UUID.randomUUID(),"username","email@gmail.com","password!", memberType);
+            new Member(UUID.randomUUID(), "username", "email@gmail.com", new Password("password!", passwordPolicy), memberType);
         });
     }
 
