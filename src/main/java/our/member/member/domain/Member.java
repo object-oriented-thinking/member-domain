@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class Member {
     private final UUID id;
-    private final Username username;
+    private Username username;
     private final Email email;
     private final Password password;
     private MemberType memberType;
@@ -50,7 +50,19 @@ public class Member {
         return memberType;
     }
 
-    public void changeMemberType() {
+    public void rename(Username username) {
+        this.username = username;
+    }
+
+    public void makeMember() {
         this.memberType = MemberType.MEMBER;
+    }
+
+    public boolean isApplicant() {
+        return this.memberType.equals(MemberType.APPLICANT);
+    }
+
+    public boolean isMember() {
+        return this.memberType.equals(MemberType.MEMBER);
     }
 }

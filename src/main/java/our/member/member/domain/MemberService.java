@@ -1,10 +1,9 @@
 package our.member.member.domain;
 
 import org.springframework.stereotype.Service;
-import our.member.member.error.AuthenticationFailedException;
-import our.member.member.error.DuplicatedEmailException;
-import our.member.member.error.MemberNotFoundException;
-import our.member.member.error.NotAllowedEmailException;
+import our.member.member.error.*;
+
+import java.util.UUID;
 
 @Service
 public class MemberService {
@@ -27,6 +26,9 @@ public class MemberService {
             return memberRepository.save(applicant.reApplyMember(member));
         }
 
+        if (!member.isApplicant()) {
+            throw new NonApplicantException();
+        }
 
         if (!authentication.requestAuthentication(member)) {
             throw new AuthenticationFailedException();
@@ -43,6 +45,23 @@ public class MemberService {
         if (member.getMemberType().equals(MemberType.MEMBER)) {
             throw new NotAllowedEmailException();
         }
-        member.changeMemberType();
+        member.makeMember();
+    }
+
+    public Member modifyUsername(UUID memberId, String username) {
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+
+        Username memberUsername = new Username(username);
+
+        if (!member.isMember()) {
+            throw new NonMemberException();
+        }
+
+        if (member.getUsername().equals(memberUsername)) {
+            throw new DuplicatedUsernameException();
+        }
+
+        member.rename(memberUsername);
+        return member;
     }
 }

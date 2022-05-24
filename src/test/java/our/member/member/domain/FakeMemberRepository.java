@@ -21,6 +21,12 @@ public class FakeMemberRepository implements MemberRepository {
     }
 
     @Override
+    public Optional<Member> findById(UUID memberId) {
+        return memberMap.values().stream().filter(member -> member.getId().equals(memberId)).findFirst();
+
+    }
+
+    @Override
     public boolean isDuplicatedFromMember(Email email) {
         return memberMap.values().stream()
                 .filter(member -> member.getMemberType().equals(MemberType.MEMBER))
