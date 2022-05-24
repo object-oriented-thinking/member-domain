@@ -1,39 +1,42 @@
 package our.member.member.domain;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class FakeMemberRepository implements MemberRepository {
     private final Map<UUID, Member> memberMap = new HashMap<>();
 
     public Member save(Member requestMember) {
-        UUID uuid = UUID.randomUUID();
-
+        UUID uuid = requestMember.getId();
+        if (requestMember.getId() == null) {
+            uuid = UUID.randomUUID();
+        }
         Member responseMember = new Member(uuid, requestMember.getUsername().getUsername(), requestMember.getEmail().getEmail(), requestMember.getPassword().getPassword(), requestMember.getMemberType());
-
         memberMap.put(uuid, responseMember);
         return responseMember;
     }
 
     @Override
-    public boolean isDuplicated(Email email) {
+    public Optional<Member> findByEmail(String email) {
+        return memberMap.values().stream().filter(member -> member.getEmail().getEmail().equals(email)).findFirst();
+    }
+
+    @Override
+    public boolean isDuplicatedFromMember(Email email) {
         return memberMap.values().stream()
                 .filter(member -> member.getMemberType().equals(MemberType.MEMBER))
                 .map(Member::getEmail)
                 .anyMatch(email1 -> email1.equals(email));
     }
 
-    public void delete(Member requestMember) {
-//        UUID targetMember = memberMap.entrySet().stream()
-//                            .filter(member -> member.equals(requestMember)
-//
-//                                    );
-//        memberMap.remove(targetMember);
+    @Override
+    public boolean isDuplicatedFromApplicant(Email email) {
+        return memberMap.values().stream()
+                .filter(member -> member.getMemberType().equals(MemberType.APPLICANT))
+                .map(Member::getEmail)
+                .anyMatch(email1 -> email1.equals(email));
     }
 
-//    public Member apply(Member applyMember) {
-//
-//    }
+    public void delete(Member requestMember) {
+    }
+
 }

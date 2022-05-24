@@ -5,66 +5,90 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import our.member.member.error.DuplicatedEmailException;
 
+import java.util.Objects;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MemberServiceTest {
 
-    private final MemberService memberService = new MemberService(new FakeMemberRepository());
+    private static final Member 기존회원 = new Member(null, "기존 회원", "email@gmail.com", "password!", MemberType.MEMBER);
+    private static final Member REQUEST_MEMBER = new Member("user", "email@gmail.com", "password!");
+    private final MemberRepository memberRepository = new FakeMemberRepository();
+    private final MemberService memberService = new MemberService(memberRepository);
+
 
     @Test
     @DisplayName("회원가입을 하기 위해 이메일과 지원자 이름, 그리고 비밀번호를 가지고 회원가입을 요청한다.")
     void test1() {
-        //given
-        Member requestMember = new Member("user", "email@gmail.com", "password!");
-        //when
-        Member joinMember = memberService.join(requestMember);
+        //given & when
+        Member joinMember = memberService.join(REQUEST_MEMBER);
         //then
-        assertThat(requestMember.getUsername()).isEqualTo(joinMember.getUsername());
+        assertThat(REQUEST_MEMBER.getUsername()).isEqualTo(joinMember.getUsername());
     }
 
     @Test
     @DisplayName("회원(`MEMBER`)과 이메일 중복이 되면 DuplicatedEmailException 예외가 발생한다.")
     void test2() {
-        Member 기존회원 = new Member(null, "기존 회원", "email@gmail.com", "password!", MemberType.MEMBER);
+        //given
         memberService.join(기존회원);
-
+        // when
         Member requestMember = new Member("user", "email@gmail.com", "password!");
-
+        //then
         Assertions.assertThrows(
                 DuplicatedEmailException.class, () -> memberService.join(requestMember)
         );
     }
 
-    // 지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 현재 지원자의 정보를 저장한다.
     @Test
     @DisplayName("지원자(`APPLICANT`)가 재지원하게 된다면, 이전 정보를 삭제하고 지원자의 정보를 저장한다.")
     void test3() {
-        Member 기존지원자 = new Member(null, "지원자","email@gmail.com","password!",MemberType.APPLICANT);
-        memberService.join(기존지원자);
-        Member applyMember = new Member("지원자", "email@gmail.com", "password!");
+        //given
+        Member member = memberService.join(REQUEST_MEMBER);
+        String email = member.getEmail().getEmail();
 
+        //when
+        Member requestReApplyMember = new Member("다시지원한사용자", email, "password!");
+        Member responseReApplyMember = memberService.join(requestReApplyMember);
+
+        //then
+        assertThat(Objects.requireNonNull(memberRepository.findByEmail(email).orElse(null)).getUsername()).isNotEqualTo(member.getUsername());
+        assertThat(Objects.requireNonNull(memberRepository.findByEmail(email).orElse(null)).getUsername()).isEqualTo(responseReApplyMember.getUsername());
 
     }
-    // 지원자(`APPLICANT`)의 정보를 저장한다.
+
     @Test
     @DisplayName("지원자(`APPLICANT`)의 정보를 저장한다.")
     void test4() {
-        Member requestMember = new Member("지원자","email@gmail.com", "password!");
+        //given
+        Member requestMember = new Member("지원자", "email@gmail.com", "password!");
+        //when
         Member applyMember = memberService.join(requestMember);
-        assertThat(requestMember.getUsername()).isEqualTo(applyMember.getUsername());
+        //then
+        assertThat(applyMember.getMemberType()).isEqualTo(MemberType.APPLICANT);
+        assertThat(applyMember.getUsername()).isEqualTo(requestMember.getUsername());
     }
-    //TODO 인증을 요청한다.
 
-    //TODO 지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.
-    //TODO 지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.
-    //TODO 회원(`MEMBER`)으로 변경한다.
     @Test
-    @DisplayName("지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.")
+    @DisplayName("인증을 요청한다.")
     void test5() {
     }
 
+    @Test
+    @DisplayName("지원자 이메일 정보를 가져와 지원자의 회원 가입을 허락한다.")
+    void test6() {
+    }
 
-//TODO 회원의 이름 정보를 가져와 회원 정보 수정한다.
+    @Test
+    @DisplayName("지원자(`APPLICANT`)만 회원 가입을 허락할 수 있다.")
+    void test7() {
+    }
+
+    @Test
+    @DisplayName("회원(`MEMBER`)으로 변경한다.")
+    void test8() {
+    }
+
+    //TODO 회원의 이름 정보를 가져와 회원 정보 수정한다.
 //TODO 사용자 이름 정보를 변경하고, 사용자 이름 정책에 맞아야 한다.
 
 //TODO 회원은 현재 비밀번호의 정보와 새 비밀번호 정보를 가져와 비밀번호 변경한다.
