@@ -1,4 +1,9 @@
-package our.member.member.domain;
+package our.member.member.fixture;
+
+import our.member.member.domain.Email;
+import our.member.member.domain.Member;
+import our.member.member.domain.MemberRepository;
+import our.member.member.domain.MemberType;
 
 import java.util.*;
 

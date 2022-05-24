@@ -3,6 +3,9 @@ package our.member.member.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import our.member.member.error.*;
+import our.member.member.fixture.FakeAuthenticationClient;
+import our.member.member.fixture.FakeMemberRepository;
+import our.member.member.fixture.FakePasswordPolicy;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -11,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static our.member.member.domain.MemberFixture.*;
+import static our.member.member.fixture.MemberFixture.*;
 
 class MemberServiceTest {
 

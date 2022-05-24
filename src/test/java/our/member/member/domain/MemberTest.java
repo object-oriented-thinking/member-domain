@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import our.member.member.error.*;
+import our.member.member.fixture.FakePasswordPolicy;
 
 import java.util.UUID;
 

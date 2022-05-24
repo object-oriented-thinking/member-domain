@@ -1,6 +1,9 @@
-package our.member.member.domain;
+package our.member.member.fixture;
 
-import static our.member.member.domain.MemberFixture.FAILED_REQUEST_MEMBER;
+import our.member.member.domain.AuthenticationClient;
+import our.member.member.domain.Member;
+
+import static our.member.member.fixture.MemberFixture.FAILED_REQUEST_MEMBER;
 
 public class FakeAuthenticationClient implements AuthenticationClient {
     @Override
