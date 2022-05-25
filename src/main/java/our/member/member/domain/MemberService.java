@@ -7,7 +7,6 @@ import java.util.UUID;
 
 @Service
 public class MemberService {
-
     private final MemberRepository memberRepository;
     private final AuthenticationClient authentication;
 
@@ -72,5 +71,19 @@ public class MemberService {
 
         member.modifyPassword(password);
         return member;
+    }
+
+    public void withdrawMember(Password password, UUID memberId) {
+
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberNotFoundException::new);
+        if (!member.isMember()) {
+            throw new NonMemberException();
+        }
+
+        if (!member.getPassword().equals(password)) {
+            throw new FailedAuthenticationException();
+        }
+
+        memberRepository.deleteById(memberId);
     }
 }

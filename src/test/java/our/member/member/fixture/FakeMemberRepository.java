@@ -47,4 +47,9 @@ public class FakeMemberRepository implements MemberRepository {
                 .anyMatch(email1 -> email1.equals(email));
     }
 
+    @Override
+    public void deleteById(UUID memberId) {
+        memberMap.remove(memberId);
+    }
+
 }

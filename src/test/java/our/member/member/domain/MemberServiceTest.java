@@ -43,7 +43,7 @@ class MemberServiceTest {
         Member requestMember = new Member(new Username("user", profanityPolicy), "email@gmail.com", new Password("passwrod!", passwordPolicy));
         //then
         assertThrows(
-                DuplicatedEmailException.class, () -> memberService.apply(requestMember)
+            DuplicatedEmailException.class, () -> memberService.apply(requestMember)
         );
     }
 
@@ -80,7 +80,7 @@ class MemberServiceTest {
     @DisplayName("인증이 실패하면 AuthenticationFailedException 예외가 발생한다.")
     void test5() {
         assertThatThrownBy(
-                () -> memberService.apply(FAILED_REQUEST_MEMBER)
+            () -> memberService.apply(FAILED_REQUEST_MEMBER)
         ).isInstanceOf(AuthenticationFailedException.class);
     }
 
@@ -153,7 +153,7 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원은 현재 비밀번호의 정보와 새 비밀번호 정보를 가져와 비밀번호 변경한다.")
-    public void test12() {
+    void test12() {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
@@ -166,32 +166,64 @@ class MemberServiceTest {
 
     @Test
     @DisplayName("회원만 비밀번호를 수정할 수 있다.")
-    public void test13() throws Exception {
+    void test13() throws Exception {
         //given
         Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
         UUID id = member.getId();
         Password password = new Password("password!!", passwordPolicy);
         //when & then
         assertThatThrownBy(
-                () -> memberService.modifyPassword(id, password)
+            () -> memberService.modifyPassword(id, password)
         ).isInstanceOf(NonMemberException.class);
     }
 
     @Test
     @DisplayName("현재 비밀번호와 같으면 예외가 발생한다.")
-    public void test14() throws Exception {
+    void test14() throws Exception {
         //given
         Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
         UUID id = member.getId();
         Password password = new Password("password!", passwordPolicy);
         //when & then
         assertThatThrownBy(
-                () -> memberService.modifyPassword(id, password)
+            () -> memberService.modifyPassword(id, password)
         ).isInstanceOf(DuplicatedPasswordException.class);
     }
 
-//TODO 회원은 본인 인증이 완료되면 회원 탈퇴를 진행한다.
-//TODO 회원만 회원 탈퇴를 진행할 수 있다.
-//TODO 사용자 회원 탈퇴 정책인 본인 인증 완료가 되어야 한다.
+    @Test
+    @DisplayName("회원은 본인 인증이 완료되면 회원 탈퇴를 진행한다.")
+    void test15() {
+        //given
+        Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
+        UUID memberId = member.getId();
+        Password password = member.getPassword();
 
+        //when
+        memberService.withdrawMember(password, memberId);
+        //then
+        assertThat(memberRepository.findById(memberId)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("지원자가 회원 탈퇴를 진행하면 NonMemberException 예외가 발생한다.")
+    void test16() {
+        //given
+        Member member = memberRepository.save(APPLICANT_TYPE_MEMBER);
+        UUID memberId = member.getId();
+        Password password = member.getPassword();
+        //when & then
+        assertThatThrownBy(() -> memberService.withdrawMember(password, memberId)).isInstanceOf(NonMemberException.class);
+    }
+
+
+    @Test
+    @DisplayName("사용자 회원 탈퇴 정책인 본인 인증을 성공하지 못하면 FailedAuthenticationException 예외가 발생한다.")
+    void test17() {
+        //given
+        Member member = memberRepository.save(MEMBER_TYPE_MEMBER);
+        UUID memberId = member.getId();
+        Password incorrectPassword = new Password("incorrectPassword!", passwordPolicy);
+        //when
+        assertThatThrownBy(() -> memberService.withdrawMember(incorrectPassword, memberId)).isInstanceOf(FailedAuthenticationException.class);
+    }
 }

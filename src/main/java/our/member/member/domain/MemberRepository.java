@@ -9,4 +9,5 @@ public interface MemberRepository {
     Optional<Member> findById(UUID memberId);
     boolean isDuplicatedFromMember(Email email);
     boolean isDuplicatedFromApplicant(Email email);
+    void deleteById(UUID memberId);
 }
