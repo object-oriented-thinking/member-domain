@@ -1,15 +1,9 @@
-package com.example.pairprogramming.user.service;
+package our.member.authentication.service;
 
-import com.example.pairprogramming.user.domain.AuthenticationDetails;
-import com.example.pairprogramming.user.domain.UserEntity;
-import com.example.pairprogramming.user.repository.TokenRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+import our.member.authentication.repository.TokenRepository;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class UserAuthenticationService implements authenticationService{
     private final TokenRepository tokenRepository;

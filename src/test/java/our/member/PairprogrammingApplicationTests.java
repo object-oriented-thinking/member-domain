@@ -1,4 +1,4 @@
-package com.example.pairprogramming;
+package our.member;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

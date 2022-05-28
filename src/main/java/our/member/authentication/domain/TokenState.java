@@ -1,4 +1,4 @@
-package com.example.pairprogramming.user.domain;
+package our.member.authentication.domain;
 
 public enum TokenState {
     VALID,

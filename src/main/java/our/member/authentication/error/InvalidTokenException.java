@@ -1,4 +1,4 @@
-package com.example.pairprogramming.user.error;
+package our.member.authentication.error;
 
 public class InvalidTokenException extends RuntimeException{
 }

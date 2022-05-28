@@ -1,6 +1,6 @@
-package com.example.pairprogramming.user.repository;
+package our.member.authentication.repository;
 
-import com.example.pairprogramming.user.domain.AuthenticationDetails;
+import our.member.authentication.domain.AuthenticationDetails;
 
 import java.util.List;
 import java.util.Optional;

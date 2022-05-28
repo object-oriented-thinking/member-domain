@@ -1,6 +1,4 @@
-package com.example.pairprogramming.user.service;
-
-import com.example.pairprogramming.user.domain.UserEntity;
+package our.member.authentication.service;
 
 public interface authenticationService {
     // 1. token 전송
