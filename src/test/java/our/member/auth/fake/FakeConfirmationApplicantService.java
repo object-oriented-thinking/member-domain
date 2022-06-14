@@ -16,8 +16,8 @@ public class FakeConfirmationApplicantService implements ConfirmationApplicantSe
     @Override
     public String findEmailByMemberId(UUID memberId) {
         if (memberId.equals(NOT_INVALID_EMAIL_MEMBER_ID)) {
-            return null;
+            return "no-reply@mail.com";
         }
-        return memberId.toString();
+        return "test@test.com";
     }
 }

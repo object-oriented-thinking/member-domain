@@ -1,5 +1,7 @@
 package our.member.auth.domain;
 
+import our.member.auth.error.NotAllowedException;
+
 import java.util.UUID;
 
 public class AuthenticationDetailsService {
@@ -15,25 +17,25 @@ public class AuthenticationDetailsService {
     }
 
     public boolean requestAuthentication(UUID memberId) {
+        String email = confirmationApplicantService.findEmailByMemberId(memberId);
+
         if (authenticationDetailsRepository.findByMemberId(memberId).isPresent()) {
             if (!confirmationApplicantService.isApplicant(memberId)) {
                 throw new NotAllowedException();
             }
 
-            Token token = new Token();
+            Token token = Token.createToken(email);
             AuthenticationDetails authenticationDetails = authenticationDetailsRepository.findByMemberId(memberId).get();
             AuthenticationDetails updateAuthenticationDetails = new AuthenticationDetails(authenticationDetails, token);
 
-            // UPDATE
             authenticationDetailsRepository.save(updateAuthenticationDetails);
-            return notificationService.sendToMail(confirmationApplicantService.findEmailByMemberId(memberId), token);
+            return notificationService.sendToMail(email, token);
         }
 
-        Token token = new Token();
+        Token token = Token.createToken(email);
         AuthenticationDetails authenticationDetails = new AuthenticationDetails(null, memberId, token);
 
-        //CREATE
         authenticationDetailsRepository.save(authenticationDetails);
-        return notificationService.sendToMail(confirmationApplicantService.findEmailByMemberId(memberId), token);
+        return notificationService.sendToMail(email, token);
     }
 }

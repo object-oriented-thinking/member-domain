@@ -2,6 +2,8 @@ package our.member.auth.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import our.member.auth.domain.*;
+import our.member.auth.error.NotAllowedException;
 import our.member.auth.fake.FakeAuthenticationDetailsRepository;
 import our.member.auth.fake.FakeConfirmationApplicantService;
 import our.member.auth.fake.FakeNotificationService;
@@ -13,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static our.member.auth.fixture.AuthenticationFixture.APPLICANT_MEMBER_ID;
 import static our.member.auth.fixture.AuthenticationFixture.NOT_INVALID_EMAIL_MEMBER_ID;
+import static our.member.auth.fixture.TokenFixture.TOKEN_VALUE;
 
 class AuthenticationDetailsServiceTest {
 
@@ -35,7 +38,7 @@ class AuthenticationDetailsServiceTest {
         //given
         UUID authenticationId = UUID.randomUUID();
         UUID userId = APPLICANT_MEMBER_ID;
-        Token token = new Token();
+        Token token = new Token(TOKEN_VALUE);
         AuthenticationDetails authenticationDetails = new AuthenticationDetails(authenticationId, userId, token);
         //when
         authenticationDetailsRepository.save(authenticationDetails);
@@ -51,7 +54,7 @@ class AuthenticationDetailsServiceTest {
         //given
         UUID authenticationId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        Token token = new Token();
+        Token token = new Token(TOKEN_VALUE);
         AuthenticationDetails authenticationDetails = new AuthenticationDetails(authenticationId, userId, token);
 
         //when
@@ -82,7 +85,9 @@ class AuthenticationDetailsServiceTest {
     @Test
     @DisplayName("알림이 보내지지 않으면 인증에 실패한다.")
     void test6() {
+        //given
         UUID memberId = NOT_INVALID_EMAIL_MEMBER_ID;
+        //when & then
         assertThat(authenticationDetailsService.requestAuthentication(memberId)).isFalse();
     }
 

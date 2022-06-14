@@ -2,11 +2,14 @@ package our.member.auth.domain;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import our.member.auth.domain.AuthenticationDetails;
+import our.member.auth.domain.Token;
 
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static our.member.auth.fixture.TokenFixture.TOKEN_VALUE;
 
 class AuthenticationDetailsTest {
 
@@ -16,7 +19,7 @@ class AuthenticationDetailsTest {
         //given
         UUID authenticationId = UUID.randomUUID();
         UUID userId = UUID.randomUUID();
-        Token token = new Token();
+        Token token = new Token(TOKEN_VALUE);
         //when
         AuthenticationDetails details = new AuthenticationDetails(authenticationId, userId, token);
         //then

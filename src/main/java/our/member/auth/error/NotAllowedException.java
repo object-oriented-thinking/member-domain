@@ -1,4 +1,4 @@
-package our.member.auth.domain;
+package our.member.auth.error;
 
 public class NotAllowedException extends RuntimeException {
 }
